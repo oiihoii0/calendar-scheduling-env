@@ -1,0 +1,28 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+.pytest_cache/
+*.egg-info/
+dist/
+build/
+.eggs/
+
+# Virtual environments
+venv/
+.venv/
+env/
+
+# Trained models (too large for git)
+trained_models/
+*.zip
+
+# Generated charts and images (regenerate with generate_chart.py)
+charts/
+*.png
+*.jpg
+
+# Misc
+.env
+*.log
+.DS_Store

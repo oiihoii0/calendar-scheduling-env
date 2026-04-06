@@ -1,0 +1,97 @@
+name: CalendarSchedulingEnv
+version: "1.0.0"
+description: >
+  An OpenEnv Gymnasium-compatible environment where an AI agent learns to
+  schedule meetings optimally on a calendar. The agent assigns events to
+  time slots and rooms, maximising priority-weighted utilisation while
+  satisfying hard constraints (no-overlap, room availability, attendee
+  conflicts) and soft constraints (lunch breaks, travel time).
+
+author: "CalendarSchedulingEnv Team"
+license: MIT
+repository: "https://github.com/your-team/calendar-scheduling-env"
+
+server:
+  host: "0.0.0.0"
+  port: 7860
+  health_endpoint: "/health"
+
+endpoints:
+  reset:
+    method: POST
+    path: /reset
+    description: Reset environment and return initial observation
+  step:
+    method: POST
+    path: /step
+    description: Take one scheduling action
+  state:
+    method: GET
+    path: /state
+    description: Return full serialisable state snapshot
+  tasks:
+    method: GET
+    path: /tasks
+    description: List available tasks
+
+tasks:
+  - name: simple_scheduling
+    difficulty: easy
+    description: "Schedule 5 meetings in an 8-hour work day. Wide time windows, no room constraints."
+    max_steps: 50
+    num_events: 5
+    score_range: [0.0, 1.0]
+
+  - name: constrained_scheduling
+    difficulty: medium
+    description: "Schedule 8 meetings with room requirements, lunch break, and attendee unavailability."
+    max_steps: 80
+    num_events: 8
+    score_range: [0.0, 1.0]
+
+  - name: complex_scheduling
+    difficulty: hard
+    description: "Schedule 12 meetings across 5 rooms in 2 buildings with travel time constraints."
+    max_steps: 120
+    num_events: 12
+    score_range: [0.0, 1.0]
+
+observation_space:
+  type: dict
+  fields:
+    unscheduled_events:
+      type: list
+      description: Events not yet placed on the calendar
+    scheduled_events:
+      type: list
+      description: Events already placed with their time and room
+    available_rooms:
+      type: list
+      description: Room names available for scheduling
+    conflicts:
+      type: integer
+      description: Current number of time/room/attendee conflicts
+    step:
+      type: integer
+    time_remaining:
+      type: float
+      range: [0.0, 1.0]
+    events_scheduled:
+      type: integer
+    events_total:
+      type: integer
+
+action_space:
+  type: structured
+  description: >
+    Either a raw integer action or a structured JSON with fields:
+    event_title (str), start_hour (float, 9.0-17.0), room (str).
+    The server resolves structured actions to integer indices automatically.
+
+reward:
+  description: >
+    Per-step: +1.0 for valid placement, +0.2×priority bonus.
+    Conflict penalties: -2.0 per room/attendee conflict.
+    Constraint penalties: -3.0 hard, -1.0 soft.
+    Completion bonus: +5.0 + 0.5×N for zero-conflict completion.
+  normalized_score_range: [0.0, 1.0]
