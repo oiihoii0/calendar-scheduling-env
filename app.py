@@ -621,23 +621,23 @@ document.querySelectorAll('.fade-up').forEach(el=>observer.observe(el));
 _sessions: Dict[str, CalendarEnv] = {}
 
 TASKS = [
-    "simple_scheduling",
-    "constrained_scheduling",
-    "complex_scheduling",
+    "CalendarSchedulingEasy-v0",
+    "CalendarSchedulingMedium-v0",
+    "CalendarSchedulingHard-v0",
 ]
 
 # Max possible scores per task for normalisation
 _MAX_SCORES = {
-    "simple_scheduling":       17.5,   # 5 × 2.0 + 5.0 + 2.5
-    "constrained_scheduling":  35.0,   # 8 × 2.0 + 5.0 + 4.0
-    "complex_scheduling":      56.0,   # 12 × 2.0 + 5.0 + 6.0
+    "CalendarSchedulingEasy-v0":   17.5,
+    "CalendarSchedulingMedium-v0": 35.0,
+    "CalendarSchedulingHard-v0":   56.0,
 }
 
 
 # ── Request / response models ─────────────────────────────────────────
 
 class ResetRequest(BaseModel):
-    task_name: str = "simple_scheduling"
+    task_name: str = "CalendarSchedulingEasy-v0"
     seed: int = 42
     session_id: Optional[str] = None
 
@@ -752,22 +752,28 @@ def list_tasks():
     return {
         "tasks": [
             {
-                "name": "simple_scheduling",
+                "id": "CalendarSchedulingEasy-v0",
+                "name": "Simple Scheduling",
                 "difficulty": "easy",
                 "description": "Schedule 5 meetings in an 8-hour day. No room constraints.",
                 "max_steps": 50,
+                "grader": "scheduling_env.grader.ScheduleGrader",
             },
             {
-                "name": "constrained_scheduling",
+                "id": "CalendarSchedulingMedium-v0",
+                "name": "Constrained Scheduling",
                 "difficulty": "medium",
                 "description": "Schedule 8 meetings with room requirements and lunch break.",
                 "max_steps": 80,
+                "grader": "scheduling_env.grader.ScheduleGrader",
             },
             {
-                "name": "complex_scheduling",
+                "id": "CalendarSchedulingHard-v0",
+                "name": "Complex Scheduling",
                 "difficulty": "hard",
                 "description": "Schedule 12 meetings across 5 rooms with travel time constraints.",
                 "max_steps": 120,
+                "grader": "scheduling_env.grader.ScheduleGrader",
             },
         ]
     }

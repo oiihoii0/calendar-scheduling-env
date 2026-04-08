@@ -332,7 +332,16 @@ class CalendarEnv(gymnasium.Env):
         """Import and call the task factory function."""
         from scheduling_env import tasks
 
-        factory_name = f"create_{task_name}_task"
+        # Handle Gymnasium ID mapping
+        mapping = {
+            "CalendarSchedulingEasy-v0": "simple_scheduling",
+            "CalendarSchedulingMedium-v0": "constrained_scheduling",
+            "CalendarSchedulingHard-v0": "complex_scheduling",
+            "CalendarScheduling-v0": "simple_scheduling",
+        }
+        internal_name = mapping.get(task_name, task_name)
+
+        factory_name = f"create_{internal_name}_task"
         factory = getattr(tasks, factory_name, None)
         if factory is None:
             available = [
