@@ -1,4 +1,14 @@
+---
+title: Calendar Scheduling Env
+emoji: 🗓️
+colorFrom: indigo
+colorTo: purple
+sdk: docker
+pinned: false
+---
+
 # CalendarSchedulingEnv 📅
+
 
 > An **OpenEnv**-compatible Gymnasium environment where AI agents learn to optimally schedule meetings and events on a calendar.
 
