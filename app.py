@@ -753,27 +753,33 @@ def list_tasks():
         "tasks": [
             {
                 "id": "CalendarSchedulingEasy-v0",
+                "env_id": "CalendarSchedulingEasy-v0",
                 "name": "Simple Scheduling",
                 "difficulty": "easy",
                 "description": "Schedule 5 meetings in an 8-hour day. No room constraints.",
                 "max_steps": 50,
                 "grader": "scheduling_env.grader:grade_schedule",
+                "has_grader": True,
             },
             {
                 "id": "CalendarSchedulingMedium-v0",
+                "env_id": "CalendarSchedulingMedium-v0",
                 "name": "Constrained Scheduling",
                 "difficulty": "medium",
                 "description": "Schedule 8 meetings with room requirements and lunch break.",
                 "max_steps": 80,
                 "grader": "scheduling_env.grader:grade_schedule",
+                "has_grader": True,
             },
             {
                 "id": "CalendarSchedulingHard-v0",
+                "env_id": "CalendarSchedulingHard-v0",
                 "name": "Complex Scheduling",
                 "difficulty": "hard",
                 "description": "Schedule 12 meetings across 5 rooms with travel time constraints.",
                 "max_steps": 120,
                 "grader": "scheduling_env.grader:grade_schedule",
+                "has_grader": True,
             },
         ]
     }

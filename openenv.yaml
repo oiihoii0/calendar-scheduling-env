@@ -1,5 +1,7 @@
+spec_version: 1
 name: CalendarSchedulingEnv
 version: "1.0.0"
+runtime: fastapi
 description: >
   An OpenEnv Gymnasium-compatible environment where an AI agent learns to
   schedule meetings optimally on a calendar. The agent assigns events to
@@ -39,6 +41,7 @@ tasks:
     name: "Simple Scheduling"
     difficulty: easy
     grader: scheduling_env.grader:grade_schedule
+    has_grader: true
     description: "Schedule 5 meetings in an 8-hour work day. Wide time windows, no room constraints."
     max_steps: 50
 
@@ -46,6 +49,7 @@ tasks:
     name: "Constrained Scheduling"
     difficulty: medium
     grader: scheduling_env.grader:grade_schedule
+    has_grader: true
     description: "Schedule 8 meetings with room requirements, lunch break, and attendee unavailability."
     max_steps: 80
 
@@ -53,6 +57,7 @@ tasks:
     name: "Complex Scheduling"
     difficulty: hard
     grader: scheduling_env.grader:grade_schedule
+    has_grader: true
     description: "Schedule 12 meetings across 5 rooms in 2 buildings with travel time constraints."
     max_steps: 120
 
