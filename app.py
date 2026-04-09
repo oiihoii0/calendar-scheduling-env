@@ -758,7 +758,7 @@ def list_tasks():
                 "difficulty": "easy",
                 "description": "Schedule 5 meetings in an 8-hour day. No room constraints.",
                 "max_steps": 50,
-                "grader": "scheduling_env:grade_schedule",
+                "grader": "scheduling_env.grader:grade_schedule",
                 "has_grader": True,
             },
             {
@@ -768,7 +768,7 @@ def list_tasks():
                 "difficulty": "medium",
                 "description": "Schedule 8 meetings with room requirements and lunch break.",
                 "max_steps": 80,
-                "grader": "scheduling_env:grade_schedule",
+                "grader": "scheduling_env.grader:grade_schedule",
                 "has_grader": True,
             },
             {
@@ -778,7 +778,7 @@ def list_tasks():
                 "difficulty": "hard",
                 "description": "Schedule 12 meetings across 5 rooms with travel time constraints.",
                 "max_steps": 120,
-                "grader": "scheduling_env:grade_schedule",
+                "grader": "scheduling_env.grader:grade_schedule",
                 "has_grader": True,
             },
         ]
