@@ -41,8 +41,6 @@ tasks:
     grader: scheduling_env.grader:grade_schedule
     description: "Schedule 5 meetings in an 8-hour work day. Wide time windows, no room constraints."
     max_steps: 50
-    num_events: 5
-    score_range: [0.0, 1.0]
 
   - id: CalendarSchedulingMedium-v0
     name: "Constrained Scheduling"
@@ -50,8 +48,6 @@ tasks:
     grader: scheduling_env.grader:grade_schedule
     description: "Schedule 8 meetings with room requirements, lunch break, and attendee unavailability."
     max_steps: 80
-    num_events: 8
-    score_range: [0.0, 1.0]
 
   - id: CalendarSchedulingHard-v0
     name: "Complex Scheduling"
@@ -59,8 +55,6 @@ tasks:
     grader: scheduling_env.grader:grade_schedule
     description: "Schedule 12 meetings across 5 rooms in 2 buildings with travel time constraints."
     max_steps: 120
-    num_events: 12
-    score_range: [0.0, 1.0]
 
 observation_space:
   type: dict
