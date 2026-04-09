@@ -36,7 +36,7 @@ from scheduling_env.tasks import (
     create_constrained_scheduling_task,
     create_simple_scheduling_task,
 )
-from scheduling_env.grader import ScheduleGrader
+from scheduling_env.grader import ScheduleGrader, grade_schedule
 
 # Auto-register Gymnasium environments on import
 from scheduling_env import registration as _registration  # noqa: F401
@@ -48,6 +48,7 @@ __all__ = [
     "CalendarConstraint",
     "ScheduleState",
     "ScheduleGrader",
+    "grade_schedule",
     "create_simple_scheduling_task",
     "create_constrained_scheduling_task",
     "create_complex_scheduling_task",
