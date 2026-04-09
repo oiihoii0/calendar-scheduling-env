@@ -36,7 +36,7 @@ API_KEY       = os.getenv("HF_TOKEN") or os.getenv("API_KEY", "")
 API_BASE_URL  = os.getenv("API_BASE_URL", "https://router.huggingface.co/v1")
 MODEL_NAME    = os.getenv("MODEL_NAME", "Qwen/Qwen2.5-72B-Instruct")
 ENV_URL       = os.getenv("CALENDAR_ENV_URL", "http://localhost:7860")
-TASK_NAME     = os.getenv("CALENDAR_TASK", "CalendarSchedulingEasy-v0")
+TASK_NAMES    = os.getenv("CALENDAR_TASKS", "CalendarSchedulingEasy-v0,CalendarSchedulingMedium-v0,CalendarSchedulingHard-v0").split(",")
 BENCHMARK     = "CalendarSchedulingEnv"
 MAX_STEPS     = int(os.getenv("MAX_STEPS", "30"))
 TEMPERATURE   = 0.2
@@ -202,79 +202,99 @@ async def env_close(client: httpx.AsyncClient) -> None:
 
 # ── Main loop ─────────────────────────────────────────────────────────
 
-async def main() -> None:
-    openai_client = OpenAI(base_url=API_BASE_URL, api_key=API_KEY or "dummy")
-
+async def run_task(http: httpx.AsyncClient, openai_client: OpenAI, task_name: str) -> tuple:
+    """Run a single task and return results."""
     rewards: List[float] = []
     steps_taken = 0
     score = 0.0
-    success = False
 
-    log_start(task=TASK_NAME, env=BENCHMARK, model=MODEL_NAME)
+    log_start(task=task_name, env=BENCHMARK, model=MODEL_NAME)
+
+    try:
+        # Reset environment
+        reset_data = await env_reset(http, task_name)
+        obs = reset_data["observation"]
+        session_id = reset_data.get("session_id", "default")
+
+        for step in range(1, MAX_STEPS + 1):
+            if not obs.get("unscheduled_events"):
+                # All events scheduled — done
+                log_step(step, "none", 0.0, True, None)
+                rewards.append(0.0)
+                steps_taken = step
+                break
+
+            # Ask LLM for action
+            action_json = _call_llm(openai_client, obs, step)
+            action_str = (
+                f"{action_json.get('event_title','?')}@"
+                f"{action_json.get('start_hour','?')}"
+                f"/{action_json.get('room','?')}"
+            )
+
+            # Execute action
+            error_msg = None
+            try:
+                step_data = await env_step(http, action_json)
+                reward = step_data.get("reward", 0.0)
+                done = step_data.get("done", False)
+                obs = step_data.get("observation", obs)
+                score = step_data.get("score", 0.0)
+            except Exception as exc:
+                reward = 0.0
+                done = False
+                error_msg = str(exc)[:80]
+
+            rewards.append(reward)
+            steps_taken = step
+            log_step(step=step, action=action_str, reward=reward, done=done, error=error_msg)
+
+            if done:
+                break
+
+        # Final state
+        try:
+            final_state = await env_state(http)
+            score = final_state.get("normalized_score", score)
+        except Exception:
+            pass
+
+        success = score >= SUCCESS_THRESHOLD
+
+    except Exception as exc:
+        print(f"[DEBUG] Episode error for {task_name}: {exc}", flush=True)
+        success = False
+
+    log_end(success=success, steps=steps_taken, score=score, rewards=rewards)
+    return success, steps_taken, score, rewards
+
+
+async def main() -> None:
+    openai_client = OpenAI(base_url=API_BASE_URL, api_key=API_KEY or "dummy")
+
+    all_rewards: List[float] = []
+    all_scores: List[float] = []
+    all_successes: List[bool] = []
+    total_steps = 0
 
     async with httpx.AsyncClient(base_url=ENV_URL, timeout=30.0) as http:
+        for task_name in TASK_NAMES:
+            success, steps, score, rewards = await run_task(http, openai_client, task_name.strip())
+            all_successes.append(success)
+            all_scores.append(score)
+            all_rewards.extend(rewards)
+            total_steps += steps
+
+        # Close all sessions
         try:
-            # Reset environment
-            reset_data = await env_reset(http, TASK_NAME)
-            obs = reset_data["observation"]
-            session_id = reset_data.get("session_id", "default")
+            await env_close(http)
+        except Exception as e:
+            print(f"[DEBUG] env close error: {e}", flush=True)
 
-            for step in range(1, MAX_STEPS + 1):
-                if not obs.get("unscheduled_events"):
-                    # All events scheduled — done
-                    log_step(step, "none", 0.0, True, None)
-                    rewards.append(0.0)
-                    steps_taken = step
-                    break
-
-                # Ask LLM for action
-                action_json = _call_llm(openai_client, obs, step)
-                action_str = (
-                    f"{action_json.get('event_title','?')}@"
-                    f"{action_json.get('start_hour','?')}"
-                    f"/{action_json.get('room','?')}"
-                )
-
-                # Execute action
-                error_msg = None
-                try:
-                    step_data = await env_step(http, action_json)
-                    reward = step_data.get("reward", 0.0)
-                    done = step_data.get("done", False)
-                    obs = step_data.get("observation", obs)
-                    score = step_data.get("score", 0.0)
-                except Exception as exc:
-                    reward = 0.0
-                    done = False
-                    error_msg = str(exc)[:80]
-
-                rewards.append(reward)
-                steps_taken = step
-                log_step(step=step, action=action_str, reward=reward, done=done, error=error_msg)
-
-                if done:
-                    break
-
-            # Final state
-            try:
-                final_state = await env_state(http)
-                score = final_state.get("normalized_score", score)
-            except Exception:
-                pass
-
-            success = score >= SUCCESS_THRESHOLD
-
-        except Exception as exc:
-            print(f"[DEBUG] Episode error: {exc}", flush=True)
-            success = False
-
-        finally:
-            try:
-                await env_close(http)
-            except Exception as e:
-                print(f"[DEBUG] env close error: {e}", flush=True)
-
-            log_end(success=success, steps=steps_taken, score=score, rewards=rewards)
+    # Log aggregate results
+    overall_success = all(all_successes) and len(all_successes) >= 3
+    avg_score = sum(all_scores) / len(all_scores) if all_scores else 0.0
+    log_end(success=overall_success, steps=total_steps, score=avg_score, rewards=all_rewards)
 
 
 if __name__ == "__main__":
