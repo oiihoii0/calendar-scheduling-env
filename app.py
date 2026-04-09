@@ -735,9 +735,11 @@ def _resolve_action(env: CalendarEnv, req: StepRequest) -> int:
 
 
 def _normalize_score(reward: float, task_name: str) -> float:
-    """Normalize cumulative reward to [0.0, 1.0]."""
+    """Normalize cumulative reward to (0.0, 1.0) - strictly between 0 and 1."""
     max_score = _MAX_SCORES.get(task_name, 20.0)
-    return round(min(max(reward / max_score, 0.0), 1.0), 4)
+    normalized = reward / max_score
+    # Clamp to (0, 1) - strictly between, not inclusive
+    return round(min(max(normalized, 0.001), 0.999), 4)
 
 
 # ── Endpoints ─────────────────────────────────────────────────────────
