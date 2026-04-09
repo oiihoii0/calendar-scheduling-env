@@ -25,6 +25,7 @@ COPY server/ ./server/
 
 # Verify environment loads
 RUN python -c "from scheduling_env import CalendarEnv; print('CalendarEnv OK')"
+RUN python -c "from scheduling_env.grader import grade_schedule; print('Grade schedule OK')"
 RUN python -c "from app import app; print('FastAPI app OK')"
 
 # Expose HF Spaces port

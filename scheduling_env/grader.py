@@ -376,7 +376,90 @@ class ScheduleGrader:
 
 # Top-level grading function to act as an entry point for the evaluator.
 def grade_schedule(state: dict, **kwargs) -> float:
-    """Entry point for the autograder. Returns the utilization_score or equivalent metric."""
-    # In a full run, this would be wrapped by the actual platform,
-    # but we just need the function signature to exist for validation.
-    return 1.0
+    """Entry point for the autograder. Returns a normalized quality score.
+    
+    This function evaluates a completed or partial schedule and returns
+    a score between 0.0 and 1.0 representing schedule quality.
+    
+    Parameters
+    ----------
+    state : dict
+        The environment state dict from `env.get_state()` containing:
+        - task_name: str
+        - schedule: Dict[int, Dict[str, Any]] with event_id -> {start_hour, room}
+        - events_total: int
+        - events_scheduled: int
+    **kwargs
+        Additional context (may include events, constraints, rooms from task factory)
+    
+    Returns
+    -------
+    float
+        Normalized score in [0.0, 1.0]
+    """
+    # Extract task info
+    task_name = state.get("task_name", "simple_scheduling")
+    schedule_raw = state.get("schedule", {})
+    
+    # Reconstruct schedule dict with int keys and proper format
+    schedule = {}
+    for eid_str, slot_info in schedule_raw.items():
+        eid = int(eid_str) if isinstance(eid_str, str) else eid_str
+        schedule[eid] = {
+            "start_hour": slot_info["start_hour"],
+            "room": slot_info.get("room", "Main Room"),
+        }
+    
+    # Load task data to get events, constraints, and rooms
+    from scheduling_env.tasks import (
+        create_simple_scheduling_task,
+        create_constrained_scheduling_task,
+        create_complex_scheduling_task,
+    )
+    
+    task_map = {
+        "simple_scheduling": create_simple_scheduling_task,
+        "constrained_scheduling": create_constrained_scheduling_task,
+        "complex_scheduling": create_complex_scheduling_task,
+        "CalendarSchedulingEasy-v0": create_simple_scheduling_task,
+        "CalendarSchedulingMedium-v0": create_constrained_scheduling_task,
+        "CalendarSchedulingHard-v0": create_complex_scheduling_task,
+    }
+    
+    task_factory = task_map.get(task_name, create_simple_scheduling_task)
+    task_data = task_factory()
+    
+    # Allow kwargs to override task data
+    events = kwargs.get("events", task_data["events"])
+    constraints = kwargs.get("constraints", task_data["constraints"])
+    rooms = kwargs.get("rooms", task_data["rooms"])
+    
+    # Create grader and evaluate
+    grader = ScheduleGrader(
+        all_events=events,
+        constraints=constraints,
+        rooms=rooms,
+    )
+    
+    result = grader.grade(schedule)
+    
+    # Compute normalized score
+    # Base components
+    events_total = len(events)
+    completion_ratio = result.events_scheduled / events_total if events_total > 0 else 0.0
+    
+    # Penalty factors
+    conflict_penalty_normalized = min(result.conflict_penalty / (events_total * 2.0), 1.0)
+    constraint_penalty_normalized = min(result.constraint_penalty / (events_total * 3.0), 1.0)
+    
+    # Quality score: completion weighted by utilization and penalized by violations
+    quality = (
+        completion_ratio * 0.5  # 50% weight on getting events scheduled
+        + result.utilization_score * 0.3  # 30% on efficient time use
+        + result.priority_bonus / (events_total * 0.2) * 0.2  # 20% on priority optimization
+        - conflict_penalty_normalized * 0.3  # Deduct for conflicts
+        - constraint_penalty_normalized * 0.3  # Deduct for constraint violations
+    )
+    
+    # Clamp to [0, 1]
+    return max(0.0, min(1.0, quality))
