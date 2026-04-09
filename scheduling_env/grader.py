@@ -461,5 +461,5 @@ def grade_schedule(state: dict, **kwargs) -> float:
         - constraint_penalty_normalized * 0.3  # Deduct for constraint violations
     )
     
-    # Clamp to [0, 1]
-    return max(0.0, min(1.0, quality))
+    # Clamp to (0, 1) - strictly between 0 and 1, not inclusive
+    return max(0.001, min(0.999, quality))
