@@ -51,10 +51,9 @@ def dashboard():
 <html class="dark" lang="en"><head>
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>CalendarSchedulingEnv | Technical Dashboard</title>
+<title>CalendarSchedulingEnv | OpenEnv Server</title>
 <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&amp;family=Space+Grotesk:wght@300;400;500;600;700&amp;family=JetBrains+Mono:wght@400;500&amp;display=swap" rel="stylesheet"/>
-<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
 <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
 <script id="tailwind-config">
         tailwind.config = {
@@ -62,63 +61,29 @@ def dashboard():
             theme: {
                 extend: {
                     "colors": {
-                        "tertiary-fixed-dim": "#00d1ec",
                         "secondary": "#53ddfc",
-                        "on-secondary-fixed": "#003a45",
-                        "on-primary-container": "#002c0f",
-                        "inverse-on-surface": "#55545b",
-                        "secondary-container": "#00687a",
                         "background": "#0e0e13",
-                        "on-tertiary": "#005561",
-                        "error-dim": "#d53d18",
                         "on-surface-variant": "#acaab1",
                         "surface-variant": "#25252d",
-                        "on-secondary": "#004b58",
                         "outline": "#76747b",
-                        "on-background": "#f9f5fd",
-                        "on-primary-fixed": "#004a1d",
                         "outline-variant": "#48474d",
                         "surface-bright": "#2c2b33",
-                        "secondary-fixed": "#65e1ff",
-                        "on-error": "#450900",
-                        "secondary-dim": "#40ceed",
-                        "surface-container-lowest": "#000000",
                         "primary": "#6bff8f",
                         "primary-container": "#0abc56",
                         "tertiary": "#7de9ff",
-                        "inverse-primary": "#006e2f",
                         "error": "#ff7351",
                         "surface-container": "#19191f",
-                        "on-secondary-fixed-variant": "#005969",
-                        "on-tertiary-fixed-variant": "#005561",
                         "surface-container-highest": "#25252d",
-                        "on-tertiary-container": "#004b56",
-                        "tertiary-dim": "#00d1ec",
-                        "error-container": "#b92902",
                         "surface": "#0e0e13",
                         "on-surface": "#f9f5fd",
-                        "primary-fixed": "#6bff8f",
-                        "secondary-fixed-dim": "#48d4f3",
-                        "on-error-container": "#ffd2c8",
-                        "on-tertiary-fixed": "#00363e",
-                        "on-primary-fixed-variant": "#006a2d",
-                        "surface-tint": "#6bff8f",
                         "surface-container-high": "#1f1f26",
-                        "tertiary-fixed": "#00e0fd",
-                        "surface-dim": "#0e0e13",
-                        "primary-dim": "#5bf083",
-                        "primary-fixed-dim": "#5bf083",
-                        "inverse-surface": "#fcf8ff",
                         "surface-container-low": "#131319",
                         "on-primary": "#005f28",
-                        "on-secondary-container": "#ecfaff",
-                        "tertiary-container": "#00e0fd"
                     },
                     "borderRadius": {
-                        "DEFAULT": "0.125rem",
-                        "lg": "0.25rem",
-                        "xl": "0.5rem",
-                        "full": "0.75rem"
+                        "DEFAULT": "0.5rem",
+                        "lg": "0.75rem",
+                        "xl": "1rem",
                     },
                     "fontFamily": {
                         "headline": ["Inter"],
@@ -131,278 +96,179 @@ def dashboard():
     </script>
 <style>
         .glass-panel {
-            background: rgba(25, 25, 31, 0.7);
-            backdrop-filter: blur(12px);
-        }
-        .neon-glow {
-            box-shadow: 0 0 12px rgba(107, 255, 143, 0.3);
+            background: rgba(25, 25, 31, 0.6);
+            backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
         }
         .wireframe-grid {
-            background-image: linear-gradient(rgba(107, 255, 143, 0.05) 1px, transparent 1px),
-                              linear-gradient(90deg, rgba(107, 255, 143, 0.05) 1px, transparent 1px);
-            background-size: 20px 20px;
+            background-image: linear-gradient(rgba(107, 255, 143, 0.03) 1px, transparent 1px),
+                              linear-gradient(90deg, rgba(107, 255, 143, 0.03) 1px, transparent 1px);
+            background-size: 30px 30px;
+        }
+        .glow-text {
+            text-shadow: 0 0 20px rgba(107, 255, 143, 0.3);
         }
         ::-webkit-scrollbar { width: 6px; }
         ::-webkit-scrollbar-track { background: #0e0e13; }
         ::-webkit-scrollbar-thumb { background: #25252d; border-radius: 10px; }
     </style>
 </head>
-<body class="bg-background text-on-surface font-body selection:bg-primary/30">
-<!-- Main Wrapper: Two Column Layout -->
-<div class="flex min-h-screen">
-<!-- SideNavBar: Authority Source JSON -->
-<aside class="hidden md:flex flex-col h-screen w-64 bg-[#131319] docked left-0 fixed z-50 py-8 space-y-2">
-<div class="px-6 mb-10 flex items-center gap-3">
-<div class="w-8 h-8 rounded bg-primary/20 flex items-center justify-center">
-<span class="material-symbols-outlined text-primary text-xl" style="font-variation-settings: 'FILL' 1;">architecture</span>
-</div>
-<div>
-<h2 class="font-label uppercase text-xs tracking-widest text-[#6bff8f]">Architect Admin</h2>
-<p class="text-[10px] text-[#f9f5fd]/40 font-mono">System Active</p>
-</div>
-</div>
-<nav class="flex-1 px-3 space-y-1">
-<div class="flex items-center gap-4 px-4 py-3 bg-gradient-to-r from-[#6bff8f]/10 to-transparent text-[#6bff8f] border-l-4 border-[#6bff8f] cursor-pointer transition-colors duration-200">
-<span class="material-symbols-outlined text-xl">dashboard</span>
-<span class="font-label uppercase text-xs tracking-widest">Overview</span>
-</div>
-<div class="flex items-center gap-4 px-4 py-3 text-[#f9f5fd]/40 hover:text-[#f9f5fd]/80 hover:bg-[#19191f] transition-all cursor-pointer">
-<span class="material-symbols-outlined text-xl">domain</span>
-<span class="font-label uppercase text-xs tracking-widest">My Apartments</span>
-</div>
-<div class="flex items-center gap-4 px-4 py-3 text-[#f9f5fd]/40 hover:text-[#f9f5fd]/80 hover:bg-[#19191f] transition-all cursor-pointer">
-<span class="material-symbols-outlined text-xl">analytics</span>
-<span class="font-label uppercase text-xs tracking-widest">Reporting</span>
-</div>
-<div class="flex items-center gap-4 px-4 py-3 text-[#f9f5fd]/40 hover:text-[#f9f5fd]/80 hover:bg-[#19191f] transition-all cursor-pointer">
-<span class="material-symbols-outlined text-xl">settings</span>
-<span class="font-label uppercase text-xs tracking-widest">Settings</span>
-</div>
-</nav>
-<div class="px-6 pt-6 border-t border-outline-variant/10">
+<body class="bg-background text-on-surface font-body selection:bg-primary/30 min-h-screen">
+<!-- Simple Top Header -->
+<header class="flex justify-between items-center px-8 h-16 bg-background/80 backdrop-blur-xl border-b border-white/5 sticky top-0 z-50">
 <div class="flex items-center gap-3">
-<img alt="User Profile" class="w-8 h-8 rounded-full border border-primary/20" data-alt="close-up profile avatar icon with neon green border and minimalist digital human silhouette" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAneZvtAL8KwaeZpakgnxbKqkjWepUw0p8xIuoZqGOHh0DUeaDCP7HeUcnSUePuu5P6lQJtMiIYrSJxL15_ndHj2E3bCw_ldUmOjN0fzQ2hHjoGPadrkOKxbwzx3-XCM_xKFaH6OcBpd65c_9ZHXN0RsX4WQBcW7eUOOPdp8hH35BVXkuAKcwprV5PbUisDmAdn4yBJ4WvVTimm22fWVnrqcI2XHU3fyNQTI5jz8qD69nedzqi0mQICNxY3FC2r1LhIM0sYKxQF77Jk"/>
-<div class="overflow-hidden">
-<p class="text-[10px] font-bold text-on-surface truncate">DEV_OPERATOR_01</p>
-<p class="text-[9px] text-primary/60">ROOT ACCESS</p>
+<div class="w-8 h-8 rounded-lg bg-primary/20 flex items-center justify-center">
+<span class="material-symbols-outlined text-primary text-lg">calendar_month</span>
 </div>
-</div>
-</div>
-</aside>
-<!-- Main Content Canvas -->
-<main class="flex-1 md:ml-64 bg-background min-h-screen pb-24">
-<!-- TopAppBar: Content & Identity JSON -->
-<header class="flex justify-between items-center w-full px-8 h-16 bg-[#0e0e13]/80 backdrop-blur-xl docked full-width top-0 z-40 sticky">
-<div class="flex items-center gap-8">
-<h1 class="text-lg font-['Space_Grotesk'] font-bold uppercase tracking-widest text-[#6bff8f]">CalendarSchedulingEnv</h1>
-<nav class="hidden lg:flex items-center gap-6 font-['Inter'] font-medium text-sm tracking-tight">
-<a class="text-[#f9f5fd]/60 hover:text-[#f9f5fd] transition-colors" href="#">Docs</a>
-<a class="text-[#6bff8f] border-b-2 border-[#6bff8f] pb-1" href="#">Tasks</a>
-<a class="text-[#f9f5fd]/60 hover:text-[#f9f5fd] transition-colors" href="#">Health</a>
-</nav>
+<h1 class="text-lg font-bold text-on-surface tracking-tight">CalendarSchedulingEnv</h1>
 </div>
 <div class="flex items-center gap-4">
-<div class="flex items-center gap-2 px-3 py-1 bg-primary/10 border border-primary/20 rounded-full">
+<div class="flex items-center gap-2 px-3 py-1.5 bg-primary/10 border border-primary/20 rounded-full">
 <span class="w-2 h-2 rounded-full bg-primary animate-pulse shadow-[0_0_8px_#6bff8f]"></span>
-<span class="text-[10px] font-label uppercase tracking-widest text-primary">Live on Spaces</span>
+<span class="text-[10px] font-medium uppercase tracking-widest text-primary">Live</span>
 </div>
 </div>
 </header>
-<div class="max-w-7xl mx-auto px-8 pt-8 space-y-8">
-<!-- 1. Hero Header -->
-<section class="relative p-10 rounded-xl overflow-hidden border border-outline-variant/10 bg-surface-container-low">
-<div class="absolute top-0 right-0 w-1/3 h-full opacity-20 pointer-events-none wireframe-grid" style="transform: perspective(1000px) rotateY(-30deg) scale(1.5);"></div>
-<div class="relative z-10 space-y-6">
-<div class="space-y-1">
-<span class="text-primary font-label text-[10px] tracking-[0.3em] uppercase">Environment Dashboard</span>
-<h2 class="text-4xl font-headline font-extrabold tracking-tight text-on-surface">Calendar Scheduling <span class="text-primary">Environment</span></h2>
-</div>
-<p class="max-w-2xl text-on-surface-variant leading-relaxed">A high-fidelity Markov Decision Process simulator for multi-room, multi-agent temporal resource allocation. Optimize scheduling efficiency across complex architectural constraints.</p>
-<div class="flex gap-4">
-<button class="bg-gradient-to-br from-primary to-primary-container text-on-primary font-label font-bold text-xs uppercase tracking-widest px-6 py-3 rounded hover:scale-[1.02] active:scale-95 transition-all">Try API Interface</button>
-<button class="border border-outline-variant/30 text-on-surface font-label font-bold text-xs uppercase tracking-widest px-6 py-3 rounded hover:bg-white/5 transition-all">View Task Library</button>
-</div>
-</div>
-</section>
-<!-- 2. Global Stats -->
-<section class="grid grid-cols-1 md:grid-cols-4 gap-4">
-<div class="bg-surface-container-low p-6 rounded-lg border-l-2 border-primary/40">
-<p class="text-on-surface-variant font-label text-[10px] uppercase tracking-wider mb-1">Difficulty Levels</p>
-<div class="flex items-baseline gap-2">
-<span class="text-3xl font-mono text-primary font-bold">03</span>
-<span class="text-[10px] text-on-surface-variant font-mono">TIERS</span>
-</div>
-</div>
-<div class="bg-surface-container-low p-6 rounded-lg border-l-2 border-secondary/40">
-<p class="text-on-surface-variant font-label text-[10px] uppercase tracking-wider mb-1">Max Events</p>
-<div class="flex items-baseline gap-2">
-<span class="text-3xl font-mono text-secondary font-bold">12</span>
-<span class="text-[10px] text-on-surface-variant font-mono">CAPACITY</span>
-</div>
-</div>
-<div class="bg-surface-container-low p-6 rounded-lg border-l-2 border-primary/40">
-<p class="text-on-surface-variant font-label text-[10px] uppercase tracking-wider mb-1">Active Rooms</p>
-<div class="flex items-baseline gap-2">
-<span class="text-3xl font-mono text-primary font-bold">05</span>
-<span class="text-[10px] text-on-surface-variant font-mono">AVAILABLE</span>
-</div>
-</div>
-<div class="bg-surface-container-low p-6 rounded-lg border-l-2 border-tertiary-fixed-dim/40">
-<p class="text-on-surface-variant font-label text-[10px] uppercase tracking-wider mb-1">System Score</p>
-<div class="flex items-baseline gap-2">
-<span class="text-3xl font-mono text-tertiary-fixed-dim font-bold">0.84</span>
-<span class="text-[10px] text-on-surface-variant font-mono">DELTA</span>
+
+<!-- Main Content -->
+<main class="max-w-6xl mx-auto px-6 py-10 space-y-8">
+<!-- Hero Section -->
+<section class="relative p-8 rounded-2xl overflow-hidden glass-panel">
+<div class="absolute top-0 right-0 w-96 h-full opacity-30 wireframe-grid" style="transform: perspective(1000px) rotateY(-20deg) scale(1.2);"></div>
+<div class="relative z-10 space-y-4">
+<h2 class="text-3xl md:text-4xl font-bold tracking-tight text-on-surface">
+                    AI Scheduling <span class="text-primary glow-text">Environment</span>
+</h2>
+<p class="max-w-xl text-on-surface-variant text-sm leading-relaxed">
+                    A high-fidelity Gymnasium environment for multi-agent temporal resource allocation. 
+                    Train RL agents to optimize meeting schedules across complex constraints.
+                </p>
+<div class="flex gap-3 pt-2">
+<a href="/docs" class="bg-primary text-on-primary font-semibold text-xs uppercase tracking-wider px-5 py-2.5 rounded-lg hover:scale-[1.02] transition-all">
+                        Get Started
+                    </a>
+<a href="/tasks" class="border border-white/10 text-on-surface font-semibold text-xs uppercase tracking-wider px-5 py-2.5 rounded-lg hover:bg-white/5 transition-all">
+                        View Tasks
+                    </a>
 </div>
 </div>
 </section>
-<!-- 3. Task Grid -->
+
+<!-- Stats Row -->
+<section class="grid grid-cols-2 md:grid-cols-4 gap-4">
+<div class="glass-panel p-5 rounded-xl">
+<p class="text-[10px] uppercase tracking-widest text-on-surface-variant mb-1">Tasks</p>
+<div class="text-2xl font-bold text-primary">3</div>
+<p class="text-[10px] text-on-surface-variant mt-1">Difficulty Levels</p>
+</div>
+<div class="glass-panel p-5 rounded-xl">
+<p class="text-[10px] uppercase tracking-widest text-on-surface-variant mb-1">Events</p>
+<div class="text-2xl font-bold text-secondary">25</div>
+<p class="text-[10px] text-on-surface-variant mt-1">Total Capacity</p>
+</div>
+<div class="glass-panel p-5 rounded-xl">
+<p class="text-[10px] uppercase tracking-widest text-on-surface-variant mb-1">Rooms</p>
+<div class="text-2xl font-bold text-tertiary">9</div>
+<p class="text-[10px] text-on-surface-variant mt-1">Meeting Spaces</p>
+</div>
+<div class="glass-panel p-5 rounded-xl">
+<p class="text-[10px] uppercase tracking-widest text-on-surface-variant mb-1">Tests</p>
+<div class="text-2xl font-bold text-primary">37</div>
+<p class="text-[10px] text-on-surface-variant mt-1">Passing</p>
+</div>
+</section>
+
+<!-- Task Cards -->
 <section class="space-y-4">
-<div class="flex justify-between items-end">
-<h3 class="font-label text-xs uppercase tracking-widest text-on-surface-variant">Active Task Library</h3>
-<span class="text-[10px] font-mono text-primary/60">MODULAR_GRIDS_LOADED</span>
-</div>
-<div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+<h3 class="text-xs uppercase tracking-widest text-on-surface-variant font-medium">Available Tasks</h3>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-4">
 <!-- Easy -->
-<div class="glass-panel rounded-xl border border-outline-variant/10 group hover:border-primary/30 transition-all overflow-hidden flex flex-col">
-<div class="h-40 bg-surface-container-lowest relative wireframe-grid">
-<div class="absolute inset-0 flex items-center justify-center opacity-40">
-<span class="material-symbols-outlined text-primary text-6xl" style="font-variation-settings: 'wght' 100;">view_in_ar</span>
+<div class="glass-panel rounded-xl overflow-hidden hover:border-primary/30 transition-all group cursor-pointer">
+<div class="h-32 bg-surface-container-lowest relative wireframe-grid flex items-center justify-center">
+<span class="material-symbols-outlined text-primary text-5xl opacity-40 group-hover:opacity-60 transition-opacity">event_available</span>
+<div class="absolute top-3 left-3 px-2 py-1 bg-primary/20 rounded text-[9px] font-medium text-primary uppercase">Easy</div>
 </div>
-<div class="absolute bottom-2 left-4 px-2 py-1 bg-primary/20 rounded text-[9px] font-label text-primary uppercase">Tier 01</div>
-</div>
-<div class="p-6 space-y-4 flex-1">
-<div>
-<h4 class="text-on-surface font-bold text-lg">Simple Scheduling</h4>
-<p class="text-xs text-on-surface-variant mt-1">Single-room allocation with no overlap constraints.</p>
-</div>
-<div class="flex justify-between items-center pt-4 mt-auto border-t border-outline-variant/10">
-<span class="text-[10px] font-label uppercase text-primary">Status: Stable</span>
-<span class="material-symbols-outlined text-on-surface-variant text-sm">arrow_forward</span>
+<div class="p-5 space-y-3">
+<h4 class="font-semibold text-on-surface">Simple Scheduling</h4>
+<p class="text-xs text-on-surface-variant">5 events, 1 room. Basic temporal constraints.</p>
+<div class="flex items-center justify-between pt-2">
+<span class="text-[10px] text-primary font-medium">50 Steps</span>
+<span class="material-symbols-outlined text-on-surface-variant text-sm group-hover:text-primary transition-colors">arrow_forward</span>
 </div>
 </div>
 </div>
 <!-- Medium -->
-<div class="glass-panel rounded-xl border border-outline-variant/10 group hover:border-secondary/30 transition-all overflow-hidden flex flex-col">
-<div class="h-40 bg-surface-container-lowest relative wireframe-grid">
-<div class="absolute inset-0 flex items-center justify-center opacity-40">
-<span class="material-symbols-outlined text-secondary text-6xl" style="font-variation-settings: 'wght' 100;">dashboard_customize</span>
+<div class="glass-panel rounded-xl overflow-hidden hover:border-secondary/30 transition-all group cursor-pointer">
+<div class="h-32 bg-surface-container-lowest relative wireframe-grid flex items-center justify-center">
+<span class="material-symbols-outlined text-secondary text-5xl opacity-40 group-hover:opacity-60 transition-opacity">event_note</span>
+<div class="absolute top-3 left-3 px-2 py-1 bg-secondary/20 rounded text-[9px] font-medium text-secondary uppercase">Medium</div>
 </div>
-<div class="absolute bottom-2 left-4 px-2 py-1 bg-secondary/20 rounded text-[9px] font-label text-secondary uppercase">Tier 02</div>
-</div>
-<div class="p-6 space-y-4 flex-1">
-<div>
-<h4 class="text-on-surface font-bold text-lg">Constrained Scheduling</h4>
-<p class="text-xs text-on-surface-variant mt-1">Multi-room dependency graphs and priority tiers.</p>
-</div>
-<div class="flex justify-between items-center pt-4 mt-auto border-t border-outline-variant/10">
-<span class="text-[10px] font-label uppercase text-secondary">Status: Active</span>
-<span class="material-symbols-outlined text-on-surface-variant text-sm">arrow_forward</span>
+<div class="p-5 space-y-3">
+<h4 class="font-semibold text-on-surface">Constrained Scheduling</h4>
+<p class="text-xs text-on-surface-variant">8 events, 3 rooms. Lunch breaks & priorities.</p>
+<div class="flex items-center justify-between pt-2">
+<span class="text-[10px] text-secondary font-medium">80 Steps</span>
+<span class="material-symbols-outlined text-on-surface-variant text-sm group-hover:text-secondary transition-colors">arrow_forward</span>
 </div>
 </div>
 </div>
 <!-- Hard -->
-<div class="glass-panel rounded-xl border border-outline-variant/10 group hover:border-error/30 transition-all overflow-hidden flex flex-col">
-<div class="h-40 bg-surface-container-lowest relative wireframe-grid">
-<div class="absolute inset-0 flex items-center justify-center opacity-40">
-<span class="material-symbols-outlined text-error text-6xl" style="font-variation-settings: 'wght' 100;">filter_center_focus</span>
+<div class="glass-panel rounded-xl overflow-hidden hover:border-error/30 transition-all group cursor-pointer">
+<div class="h-32 bg-surface-container-lowest relative wireframe-grid flex items-center justify-center">
+<span class="material-symbols-outlined text-error text-5xl opacity-40 group-hover:opacity-60 transition-opacity">event_busy</span>
+<div class="absolute top-3 left-3 px-2 py-1 bg-error/20 rounded text-[9px] font-medium text-error uppercase">Hard</div>
 </div>
-<div class="absolute bottom-2 left-4 px-2 py-1 bg-error/20 rounded text-[9px] font-label text-error uppercase">Tier 03</div>
-</div>
-<div class="p-6 space-y-4 flex-1">
-<div>
-<h4 class="text-on-surface font-bold text-lg">Complex Scheduling</h4>
-<p class="text-xs text-on-surface-variant mt-1">Dynamic event resizing and conflict resolution.</p>
-</div>
-<div class="flex justify-between items-center pt-4 mt-auto border-t border-outline-variant/10">
-<span class="text-[10px] font-label uppercase text-error">Status: Critical</span>
-<span class="material-symbols-outlined text-on-surface-variant text-sm">arrow_forward</span>
+<div class="p-5 space-y-3">
+<h4 class="font-semibold text-on-surface">Complex Scheduling</h4>
+<p class="text-xs text-on-surface-variant">12 events, 5 rooms. Travel time & conflicts.</p>
+<div class="flex items-center justify-between pt-2">
+<span class="text-[10px] text-error font-medium">120 Steps</span>
+<span class="material-symbols-outlined text-on-surface-variant text-sm group-hover:text-error transition-colors">arrow_forward</span>
 </div>
 </div>
 </div>
 </div>
 </section>
-<!-- 4. API Control Center & Reward Logic Grid -->
-<div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
-<!-- API Control Center -->
-<section class="space-y-4">
-<h3 class="font-label text-xs uppercase tracking-widest text-on-surface-variant">API Control Center</h3>
-<div class="bg-surface-container-low rounded-xl border border-outline-variant/10 overflow-hidden">
-<div class="divide-y divide-outline-variant/10">
-<div class="p-4 flex items-center gap-4 hover:bg-surface-container-highest/30 transition-all">
-<span class="px-2 py-1 bg-primary/20 text-primary text-[9px] font-mono rounded">GET</span>
+
+<!-- API Endpoints -->
+<section class="glass-panel rounded-xl p-6">
+<h3 class="text-xs uppercase tracking-widest text-on-surface-variant font-medium mb-4">API Endpoints</h3>
+<div class="space-y-2">
+<a href="/health" class="flex items-center gap-4 p-3 rounded-lg hover:bg-white/5 transition-all group">
+<span class="px-2 py-1 bg-primary/20 text-primary text-[10px] font-mono rounded">GET</span>
 <code class="text-sm font-mono text-on-surface">/health</code>
-<span class="text-xs text-on-surface-variant flex-1 text-right">System status &amp; latency</span>
-</div>
-<div class="p-4 flex items-center gap-4 hover:bg-surface-container-highest/30 transition-all">
-<span class="px-2 py-1 bg-primary/20 text-primary text-[9px] font-mono rounded">GET</span>
-<code class="text-sm font-mono text-on-surface">/tasks</code>
-<span class="text-xs text-on-surface-variant flex-1 text-right">List available MDP tasks</span>
-</div>
-<div class="p-4 flex items-center gap-4 hover:bg-surface-container-highest/30 transition-all">
-<span class="px-2 py-1 bg-error/20 text-error text-[9px] font-mono rounded">POST</span>
+<span class="text-xs text-on-surface-variant flex-1 text-right group-hover:text-on-surface transition-colors">Check status</span>
+</a>
+<a href="/tasks" class="flex items-center gap-4 p-3 rounded-lg hover:bg-white/5 transition-all group">
+<span class="px-2 py-1 bg-primary/20 text-primary text-[10px] font-mono rounded">GET</span>
+<code class="text-sm font-mono text-on-surface">/tasks</span>
+<span class="text-xs text-on-surface-variant flex-1 text-right group-hover:text-on-surface transition-colors">List tasks</span>
+</a>
+<div class="flex items-center gap-4 p-3 rounded-lg opacity-60">
+<span class="px-2 py-1 bg-error/20 text-error text-[10px] font-mono rounded">POST</span>
 <code class="text-sm font-mono text-on-surface">/reset</code>
-<span class="text-xs text-on-surface-variant flex-1 text-right">Flush current environment state</span>
+<span class="text-xs text-on-surface-variant flex-1 text-right">Reset env</span>
 </div>
-<div class="p-4 flex items-center gap-4 hover:bg-surface-container-highest/30 transition-all">
-<span class="px-2 py-1 bg-secondary/20 text-secondary text-[9px] font-mono rounded">POST</span>
+<div class="flex items-center gap-4 p-3 rounded-lg opacity-60">
+<span class="px-2 py-1 bg-secondary/20 text-secondary text-[10px] font-mono rounded">POST</span>
 <code class="text-sm font-mono text-on-surface">/step</code>
-<span class="text-xs text-on-surface-variant flex-1 text-right">Execute agent action sequence</span>
+<span class="text-xs text-on-surface-variant flex-1 text-right">Execute action</span>
 </div>
-<div class="p-4 flex items-center gap-4 hover:bg-surface-container-highest/30 transition-all">
-<span class="px-2 py-1 bg-primary/20 text-primary text-[9px] font-mono rounded">GET</span>
+<a href="/state?session_id=default" class="flex items-center gap-4 p-3 rounded-lg hover:bg-white/5 transition-all group">
+<span class="px-2 py-1 bg-primary/20 text-primary text-[10px] font-mono rounded">GET</span>
 <code class="text-sm font-mono text-on-surface">/state</code>
-<span class="text-xs text-on-surface-variant flex-1 text-right">Current tensor observation</span>
-</div>
-</div>
-</div>
-</section>
-<!-- Reward Logic -->
-<section class="space-y-4">
-<h3 class="font-label text-xs uppercase tracking-widest text-on-surface-variant">Reward Objective Logic</h3>
-<div class="grid grid-cols-2 gap-4">
-<div class="p-5 bg-surface-container-low rounded-xl border border-outline-variant/10 space-y-2">
-<div class="flex justify-between items-center">
-<span class="text-xs font-bold text-on-surface">Valid Action</span>
-<span class="text-primary font-mono text-xs">+1.0</span>
-</div>
-<p class="text-[10px] text-on-surface-variant leading-relaxed">Assigned when an agent successfully schedules an event with no temporal conflicts.</p>
-</div>
-<div class="p-5 bg-surface-container-low rounded-xl border border-outline-variant/10 space-y-2">
-<div class="flex justify-between items-center">
-<span class="text-xs font-bold text-on-surface">Invalid Action</span>
-<span class="text-error font-mono text-xs">-0.5</span>
-</div>
-<p class="text-[10px] text-on-surface-variant leading-relaxed">Penalty for attempting to place an event in an occupied slot or invalid room.</p>
-</div>
-<div class="p-5 bg-surface-container-low rounded-xl border border-outline-variant/10 space-y-2">
-<div class="flex justify-between items-center">
-<span class="text-xs font-bold text-on-surface">Completion</span>
-<span class="text-primary font-mono text-xs">+5.0</span>
-</div>
-<p class="text-[10px] text-on-surface-variant leading-relaxed">Bonus for successfully scheduling all events within the max step limit.</p>
-</div>
-<div class="p-5 bg-surface-container-low rounded-xl border border-outline-variant/10 space-y-2">
-<div class="flex justify-between items-center">
-<span class="text-xs font-bold text-on-surface">Step Decay</span>
-<span class="text-secondary font-mono text-xs">-0.01</span>
-</div>
-<p class="text-[10px] text-on-surface-variant leading-relaxed">Negative pressure per environment step to encourage rapid convergence.</p>
-</div>
+<span class="text-xs text-on-surface-variant flex-1 text-right group-hover:text-on-surface transition-colors">Get state</span>
+</a>
 </div>
 </section>
-</div>
-</div>
 </main>
-<!-- Footer: JSON Authority -->
-<footer class="fixed bottom-0 left-0 md:left-64 right-0 flex justify-between items-center px-12 py-6 bg-[#0e0e13] border-t border-[#48474d]/15 z-50">
-<p class="font-['Inter'] text-[10px] text-[#f9f5fd]/30 uppercase tracking-widest">© 2024 Obsidian Architect Hackathon</p>
-<div class="flex gap-8">
-<a class="font-['Inter'] text-[10px] text-[#f9f5fd]/30 hover:text-[#6bff8f] hover:underline transition-colors" href="#">Documentation</a>
-<a class="font-['Inter'] text-[10px] text-[#f9f5fd]/30 hover:text-[#6bff8f] hover:underline transition-colors" href="#">API Reference</a>
-<a class="font-['Inter'] text-[10px] text-[#f9f5fd]/30 hover:text-[#6bff8f] hover:underline transition-colors" href="#">Support</a>
-</div>
+
+<!-- Simple Footer -->
+<footer class="mt-16 py-8 border-t border-white/5 text-center">
+<p class="text-[10px] text-on-surface-variant/50 uppercase tracking-widest">
+                Meta PyTorch Hackathon • OpenEnv Compatible
+            </p>
 </footer>
-</div>
 </body></html>'''
 
 # ── OpenEnv Endpoints ──────────────────────────────────────────────────
