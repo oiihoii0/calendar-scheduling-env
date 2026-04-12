@@ -95,15 +95,20 @@ def dashboard():
         }
     </script>
 <style>
+        body {
+            background: linear-gradient(135deg, #0e0e13 0%, #1a1a24 50%, #0e0e13 100%);
+        }
         .glass-panel {
             background: rgba(25, 25, 31, 0.6);
             backdrop-filter: blur(16px);
             border: 1px solid rgba(255, 255, 255, 0.08);
+            box-shadow: 0 4px 24px rgba(0, 0, 0, 0.3), 0 0 0 1px rgba(255, 255, 255, 0.02);
             transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
         }
         .glass-panel:hover {
             background: rgba(35, 35, 45, 0.7);
-            border-color: rgba(107, 255, 143, 0.2);
+            border-color: rgba(107, 255, 143, 0.3);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(107, 255, 143, 0.1), 0 0 20px rgba(107, 255, 143, 0.1);
             transform: translateY(-2px);
         }
         .wireframe-grid {
@@ -119,20 +124,40 @@ def dashboard():
         .glow-text {
             text-shadow: 0 0 20px rgba(107, 255, 143, 0.3);
             animation: pulseGlow 3s ease-in-out infinite;
+            background: linear-gradient(135deg, #6bff8f 0%, #7de9ff 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
         }
         @keyframes pulseGlow {
-            0%, 100% { text-shadow: 0 0 20px rgba(107, 255, 143, 0.3); }
-            50% { text-shadow: 0 0 30px rgba(107, 255, 143, 0.5); }
+            0%, 100% { filter: drop-shadow(0 0 20px rgba(107, 255, 143, 0.3)); }
+            50% { filter: drop-shadow(0 0 30px rgba(107, 255, 143, 0.5)); }
         }
         .stat-card {
             opacity: 0;
             transform: translateY(30px);
             animation: slideUp 0.6s ease-out forwards;
+            position: relative;
+            overflow: hidden;
         }
-        .stat-card:nth-child(1) { animation-delay: 0.1s; }
-        .stat-card:nth-child(2) { animation-delay: 0.2s; }
-        .stat-card:nth-child(3) { animation-delay: 0.3s; }
-        .stat-card:nth-child(4) { animation-delay: 0.4s; }
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, var(--accent-color, #6bff8f), transparent);
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+        .stat-card:hover::before {
+            opacity: 1;
+        }
+        .stat-card:nth-child(1) { animation-delay: 0.1s; --accent-color: #6bff8f; }
+        .stat-card:nth-child(2) { animation-delay: 0.2s; --accent-color: #53ddfc; }
+        .stat-card:nth-child(3) { animation-delay: 0.3s; --accent-color: #7de9ff; }
+        .stat-card:nth-child(4) { animation-delay: 0.4s; --accent-color: #6bff8f; }
         @keyframes slideUp {
             to { opacity: 1; transform: translateY(0); }
         }
@@ -148,10 +173,32 @@ def dashboard():
         .task-card:hover {
             transform: translateY(-4px) scale(1.02);
         }
+        .task-card .wireframe-grid {
+            transition: opacity 0.3s;
+        }
+        .task-card:hover .wireframe-grid {
+            opacity: 0.6;
+        }
         .endpoint-row {
             opacity: 0;
             transform: translateX(20px);
             transition: all 0.3s ease;
+            position: relative;
+        }
+        .endpoint-row::after {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 0;
+            height: 100%;
+            background: linear-gradient(90deg, rgba(107, 255, 143, 0.1), transparent);
+            transition: width 0.3s;
+            pointer-events: none;
+        }
+        .endpoint-row:hover::after {
+            width: 100%;
         }
         .endpoint-row.visible {
             opacity: 1;
@@ -173,13 +220,28 @@ def dashboard():
         }
         .number-counter {
             font-variant-numeric: tabular-nums;
+            background: linear-gradient(135deg, var(--counter-color, #6bff8f) 0%, rgba(255,255,255,0.8) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
         }
+        .stat-card:nth-child(1) .number-counter { --counter-color: #6bff8f; }
+        .stat-card:nth-child(2) .number-counter { --counter-color: #53ddfc; }
+        .stat-card:nth-child(3) .number-counter { --counter-color: #7de9ff; }
+        .stat-card:nth-child(4) .number-counter { --counter-color: #6bff8f; }
         .floating {
             animation: floating 6s ease-in-out infinite;
         }
         @keyframes floating {
             0%, 100% { transform: translateY(0px); }
             50% { transform: translateY(-10px); }
+        }
+        .live-pulse {
+            animation: livePulse 2s ease-in-out infinite;
+        }
+        @keyframes livePulse {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(107, 255, 143, 0.4); }
+            50% { box-shadow: 0 0 0 8px rgba(107, 255, 143, 0); }
         }
         ::-webkit-scrollbar { width: 6px; }
         ::-webkit-scrollbar-track { background: #0e0e13; }
@@ -198,7 +260,7 @@ def dashboard():
 </div>
 <div class="flex items-center gap-4">
 <div class="flex items-center gap-2 px-3 py-1.5 bg-primary/10 border border-primary/20 rounded-full">
-<span class="w-2 h-2 rounded-full bg-primary animate-pulse shadow-[0_0_8px_#6bff8f]"></span>
+<span class="w-2 h-2 rounded-full bg-primary live-pulse"></span>
 <span class="text-[10px] font-medium uppercase tracking-widest text-primary">Live</span>
 </div>
 </div>
