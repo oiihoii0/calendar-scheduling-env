@@ -99,18 +99,92 @@ def dashboard():
             background: rgba(25, 25, 31, 0.6);
             backdrop-filter: blur(16px);
             border: 1px solid rgba(255, 255, 255, 0.08);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .glass-panel:hover {
+            background: rgba(35, 35, 45, 0.7);
+            border-color: rgba(107, 255, 143, 0.2);
+            transform: translateY(-2px);
         }
         .wireframe-grid {
             background-image: linear-gradient(rgba(107, 255, 143, 0.03) 1px, transparent 1px),
                               linear-gradient(90deg, rgba(107, 255, 143, 0.03) 1px, transparent 1px);
             background-size: 30px 30px;
+            animation: gridMove 20s linear infinite;
+        }
+        @keyframes gridMove {
+            0% { transform: perspective(1000px) rotateY(-20deg) scale(1.2) translateX(0); }
+            100% { transform: perspective(1000px) rotateY(-20deg) scale(1.2) translateX(30px); }
         }
         .glow-text {
             text-shadow: 0 0 20px rgba(107, 255, 143, 0.3);
+            animation: pulseGlow 3s ease-in-out infinite;
+        }
+        @keyframes pulseGlow {
+            0%, 100% { text-shadow: 0 0 20px rgba(107, 255, 143, 0.3); }
+            50% { text-shadow: 0 0 30px rgba(107, 255, 143, 0.5); }
+        }
+        .stat-card {
+            opacity: 0;
+            transform: translateY(30px);
+            animation: slideUp 0.6s ease-out forwards;
+        }
+        .stat-card:nth-child(1) { animation-delay: 0.1s; }
+        .stat-card:nth-child(2) { animation-delay: 0.2s; }
+        .stat-card:nth-child(3) { animation-delay: 0.3s; }
+        .stat-card:nth-child(4) { animation-delay: 0.4s; }
+        @keyframes slideUp {
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .task-card {
+            opacity: 0;
+            transform: translateX(-30px);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .task-card.visible {
+            opacity: 1;
+            transform: translateX(0);
+        }
+        .task-card:hover {
+            transform: translateY(-4px) scale(1.02);
+        }
+        .endpoint-row {
+            opacity: 0;
+            transform: translateX(20px);
+            transition: all 0.3s ease;
+        }
+        .endpoint-row.visible {
+            opacity: 1;
+            transform: translateX(0);
+        }
+        .typewriter {
+            overflow: hidden;
+            border-right: 2px solid #6bff8f;
+            white-space: nowrap;
+            animation: typing 2s steps(20, end), blink 0.75s step-end infinite;
+            max-width: fit-content;
+        }
+        @keyframes typing {
+            from { width: 0; }
+            to { width: 100%; }
+        }
+        @keyframes blink {
+            50% { border-color: transparent; }
+        }
+        .number-counter {
+            font-variant-numeric: tabular-nums;
+        }
+        .floating {
+            animation: floating 6s ease-in-out infinite;
+        }
+        @keyframes floating {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
         }
         ::-webkit-scrollbar { width: 6px; }
         ::-webkit-scrollbar-track { background: #0e0e13; }
         ::-webkit-scrollbar-thumb { background: #25252d; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: #6bff8f; }
     </style>
 </head>
 <body class="bg-background text-on-surface font-body selection:bg-primary/30 min-h-screen">
@@ -134,20 +208,20 @@ def dashboard():
 <main class="max-w-6xl mx-auto px-6 py-10 space-y-8">
 <!-- Hero Section -->
 <section class="relative p-8 rounded-2xl overflow-hidden glass-panel">
-<div class="absolute top-0 right-0 w-96 h-full opacity-30 wireframe-grid" style="transform: perspective(1000px) rotateY(-20deg) scale(1.2);"></div>
+<div class="absolute top-0 right-0 w-96 h-full opacity-30 wireframe-grid"></div>
 <div class="relative z-10 space-y-4">
-<h2 class="text-3xl md:text-4xl font-bold tracking-tight text-on-surface">
-                    AI Scheduling <span class="text-primary glow-text">Environment</span>
+<h2 class="text-3xl md:text-4xl font-bold tracking-tight text-on-surface mb-2">
+                    AI Scheduling <span class="text-primary glow-text inline-block">Environment</span>
 </h2>
 <p class="max-w-xl text-on-surface-variant text-sm leading-relaxed">
                     A high-fidelity Gymnasium environment for multi-agent temporal resource allocation. 
                     Train RL agents to optimize meeting schedules across complex constraints.
                 </p>
 <div class="flex gap-3 pt-2">
-<a href="/docs" class="bg-primary text-on-primary font-semibold text-xs uppercase tracking-wider px-5 py-2.5 rounded-lg hover:scale-[1.02] transition-all">
+<a href="/docs" class="bg-primary text-on-primary font-semibold text-xs uppercase tracking-wider px-5 py-2.5 rounded-lg hover:scale-[1.02] hover:shadow-[0_0_20px_rgba(107,255,143,0.3)] transition-all">
                         Get Started
                     </a>
-<a href="/tasks" class="border border-white/10 text-on-surface font-semibold text-xs uppercase tracking-wider px-5 py-2.5 rounded-lg hover:bg-white/5 transition-all">
+<a href="/tasks" class="border border-white/10 text-on-surface font-semibold text-xs uppercase tracking-wider px-5 py-2.5 rounded-lg hover:bg-white/5 hover:border-primary/30 transition-all">
                         View Tasks
                     </a>
 </div>
@@ -155,25 +229,25 @@ def dashboard():
 </section>
 
 <!-- Stats Row -->
-<section class="grid grid-cols-2 md:grid-cols-4 gap-4">
-<div class="glass-panel p-5 rounded-xl">
+<section class="grid grid-cols-2 md:grid-cols-4 gap-4" id="stats-section">
+<div class="glass-panel p-5 rounded-xl stat-card">
 <p class="text-[10px] uppercase tracking-widest text-on-surface-variant mb-1">Tasks</p>
-<div class="text-2xl font-bold text-primary">3</div>
+<div class="text-2xl font-bold text-primary number-counter" data-target="3">0</div>
 <p class="text-[10px] text-on-surface-variant mt-1">Difficulty Levels</p>
 </div>
-<div class="glass-panel p-5 rounded-xl">
+<div class="glass-panel p-5 rounded-xl stat-card">
 <p class="text-[10px] uppercase tracking-widest text-on-surface-variant mb-1">Events</p>
-<div class="text-2xl font-bold text-secondary">25</div>
+<div class="text-2xl font-bold text-secondary number-counter" data-target="25">0</div>
 <p class="text-[10px] text-on-surface-variant mt-1">Total Capacity</p>
 </div>
-<div class="glass-panel p-5 rounded-xl">
+<div class="glass-panel p-5 rounded-xl stat-card">
 <p class="text-[10px] uppercase tracking-widest text-on-surface-variant mb-1">Rooms</p>
-<div class="text-2xl font-bold text-tertiary">9</div>
+<div class="text-2xl font-bold text-tertiary number-counter" data-target="9">0</div>
 <p class="text-[10px] text-on-surface-variant mt-1">Meeting Spaces</p>
 </div>
-<div class="glass-panel p-5 rounded-xl">
+<div class="glass-panel p-5 rounded-xl stat-card">
 <p class="text-[10px] uppercase tracking-widest text-on-surface-variant mb-1">Tests</p>
-<div class="text-2xl font-bold text-primary">37</div>
+<div class="text-2xl font-bold text-primary number-counter" data-target="37">0</div>
 <p class="text-[10px] text-on-surface-variant mt-1">Passing</p>
 </div>
 </section>
@@ -181,49 +255,49 @@ def dashboard():
 <!-- Task Cards -->
 <section class="space-y-4">
 <h3 class="text-xs uppercase tracking-widest text-on-surface-variant font-medium">Available Tasks</h3>
-<div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+<div class="grid grid-cols-1 md:grid-cols-3 gap-4" id="tasks-section">
 <!-- Easy -->
-<div class="glass-panel rounded-xl overflow-hidden hover:border-primary/30 transition-all group cursor-pointer">
-<div class="h-32 bg-surface-container-lowest relative wireframe-grid flex items-center justify-center">
-<span class="material-symbols-outlined text-primary text-5xl opacity-40 group-hover:opacity-60 transition-opacity">event_available</span>
+<div class="glass-panel rounded-xl overflow-hidden hover:border-primary/30 transition-all group cursor-pointer task-card" style="transition-delay: 0.1s;">
+<div class="h-32 bg-surface-container-lowest relative wireframe-grid flex items-center justify-center floating">
+<span class="material-symbols-outlined text-primary text-5xl opacity-40 group-hover:opacity-80 transition-all group-hover:scale-110">event_available</span>
 <div class="absolute top-3 left-3 px-2 py-1 bg-primary/20 rounded text-[9px] font-medium text-primary uppercase">Easy</div>
 </div>
 <div class="p-5 space-y-3">
-<h4 class="font-semibold text-on-surface">Simple Scheduling</h4>
+<h4 class="font-semibold text-on-surface group-hover:text-primary transition-colors">Simple Scheduling</h4>
 <p class="text-xs text-on-surface-variant">5 events, 1 room. Basic temporal constraints.</p>
 <div class="flex items-center justify-between pt-2">
 <span class="text-[10px] text-primary font-medium">50 Steps</span>
-<span class="material-symbols-outlined text-on-surface-variant text-sm group-hover:text-primary transition-colors">arrow_forward</span>
+<span class="material-symbols-outlined text-on-surface-variant text-sm group-hover:text-primary group-hover:translate-x-1 transition-all">arrow_forward</span>
 </div>
 </div>
 </div>
 <!-- Medium -->
-<div class="glass-panel rounded-xl overflow-hidden hover:border-secondary/30 transition-all group cursor-pointer">
-<div class="h-32 bg-surface-container-lowest relative wireframe-grid flex items-center justify-center">
-<span class="material-symbols-outlined text-secondary text-5xl opacity-40 group-hover:opacity-60 transition-opacity">event_note</span>
+<div class="glass-panel rounded-xl overflow-hidden hover:border-secondary/30 transition-all group cursor-pointer task-card" style="transition-delay: 0.2s;">
+<div class="h-32 bg-surface-container-lowest relative wireframe-grid flex items-center justify-center floating" style="animation-delay: 0.5s;">
+<span class="material-symbols-outlined text-secondary text-5xl opacity-40 group-hover:opacity-80 transition-all group-hover:scale-110">event_note</span>
 <div class="absolute top-3 left-3 px-2 py-1 bg-secondary/20 rounded text-[9px] font-medium text-secondary uppercase">Medium</div>
 </div>
 <div class="p-5 space-y-3">
-<h4 class="font-semibold text-on-surface">Constrained Scheduling</h4>
+<h4 class="font-semibold text-on-surface group-hover:text-secondary transition-colors">Constrained Scheduling</h4>
 <p class="text-xs text-on-surface-variant">8 events, 3 rooms. Lunch breaks & priorities.</p>
 <div class="flex items-center justify-between pt-2">
 <span class="text-[10px] text-secondary font-medium">80 Steps</span>
-<span class="material-symbols-outlined text-on-surface-variant text-sm group-hover:text-secondary transition-colors">arrow_forward</span>
+<span class="material-symbols-outlined text-on-surface-variant text-sm group-hover:text-secondary group-hover:translate-x-1 transition-all">arrow_forward</span>
 </div>
 </div>
 </div>
 <!-- Hard -->
-<div class="glass-panel rounded-xl overflow-hidden hover:border-error/30 transition-all group cursor-pointer">
-<div class="h-32 bg-surface-container-lowest relative wireframe-grid flex items-center justify-center">
-<span class="material-symbols-outlined text-error text-5xl opacity-40 group-hover:opacity-60 transition-opacity">event_busy</span>
+<div class="glass-panel rounded-xl overflow-hidden hover:border-error/30 transition-all group cursor-pointer task-card" style="transition-delay: 0.3s;">
+<div class="h-32 bg-surface-container-lowest relative wireframe-grid flex items-center justify-center floating" style="animation-delay: 1s;">
+<span class="material-symbols-outlined text-error text-5xl opacity-40 group-hover:opacity-80 transition-all group-hover:scale-110">event_busy</span>
 <div class="absolute top-3 left-3 px-2 py-1 bg-error/20 rounded text-[9px] font-medium text-error uppercase">Hard</div>
 </div>
 <div class="p-5 space-y-3">
-<h4 class="font-semibold text-on-surface">Complex Scheduling</h4>
+<h4 class="font-semibold text-on-surface group-hover:text-error transition-colors">Complex Scheduling</h4>
 <p class="text-xs text-on-surface-variant">12 events, 5 rooms. Travel time & conflicts.</p>
 <div class="flex items-center justify-between pt-2">
 <span class="text-[10px] text-error font-medium">120 Steps</span>
-<span class="material-symbols-outlined text-on-surface-variant text-sm group-hover:text-error transition-colors">arrow_forward</span>
+<span class="material-symbols-outlined text-on-surface-variant text-sm group-hover:text-error group-hover:translate-x-1 transition-all">arrow_forward</span>
 </div>
 </div>
 </div>
@@ -231,33 +305,33 @@ def dashboard():
 </section>
 
 <!-- API Endpoints -->
-<section class="glass-panel rounded-xl p-6">
+<section class="glass-panel rounded-xl p-6" id="endpoints-section">
 <h3 class="text-xs uppercase tracking-widest text-on-surface-variant font-medium mb-4">API Endpoints</h3>
 <div class="space-y-2">
-<a href="/health" class="flex items-center gap-4 p-3 rounded-lg hover:bg-white/5 transition-all group">
-<span class="px-2 py-1 bg-primary/20 text-primary text-[10px] font-mono rounded">GET</span>
+<a href="/health" class="flex items-center gap-4 p-3 rounded-lg hover:bg-white/5 transition-all group endpoint-row" style="transition-delay: 0.05s;">
+<span class="px-2 py-1 bg-primary/20 text-primary text-[10px] font-mono rounded group-hover:bg-primary/30 transition-colors">GET</span>
 <code class="text-sm font-mono text-on-surface">/health</code>
-<span class="text-xs text-on-surface-variant flex-1 text-right group-hover:text-on-surface transition-colors">Check status</span>
+<span class="text-xs text-on-surface-variant flex-1 text-right group-hover:text-on-surface group-hover:translate-x-1 transition-all">Check status</span>
 </a>
-<a href="/tasks" class="flex items-center gap-4 p-3 rounded-lg hover:bg-white/5 transition-all group">
-<span class="px-2 py-1 bg-primary/20 text-primary text-[10px] font-mono rounded">GET</span>
+<a href="/tasks" class="flex items-center gap-4 p-3 rounded-lg hover:bg-white/5 transition-all group endpoint-row" style="transition-delay: 0.1s;">
+<span class="px-2 py-1 bg-primary/20 text-primary text-[10px] font-mono rounded group-hover:bg-primary/30 transition-colors">GET</span>
 <code class="text-sm font-mono text-on-surface">/tasks</code>
-<span class="text-xs text-on-surface-variant flex-1 text-right group-hover:text-on-surface transition-colors">List tasks</span>
+<span class="text-xs text-on-surface-variant flex-1 text-right group-hover:text-on-surface group-hover:translate-x-1 transition-all">List tasks</span>
 </a>
-<div class="flex items-center gap-4 p-3 rounded-lg opacity-60">
+<div class="flex items-center gap-4 p-3 rounded-lg opacity-60 endpoint-row" style="transition-delay: 0.15s;">
 <span class="px-2 py-1 bg-error/20 text-error text-[10px] font-mono rounded">POST</span>
 <code class="text-sm font-mono text-on-surface">/reset</code>
 <span class="text-xs text-on-surface-variant flex-1 text-right">Reset env</span>
 </div>
-<div class="flex items-center gap-4 p-3 rounded-lg opacity-60">
+<div class="flex items-center gap-4 p-3 rounded-lg opacity-60 endpoint-row" style="transition-delay: 0.2s;">
 <span class="px-2 py-1 bg-secondary/20 text-secondary text-[10px] font-mono rounded">POST</span>
 <code class="text-sm font-mono text-on-surface">/step</code>
 <span class="text-xs text-on-surface-variant flex-1 text-right">Execute action</span>
 </div>
-<a href="/state?session_id=default" class="flex items-center gap-4 p-3 rounded-lg hover:bg-white/5 transition-all group">
-<span class="px-2 py-1 bg-primary/20 text-primary text-[10px] font-mono rounded">GET</span>
+<a href="/state?session_id=default" class="flex items-center gap-4 p-3 rounded-lg hover:bg-white/5 transition-all group endpoint-row" style="transition-delay: 0.25s;">
+<span class="px-2 py-1 bg-primary/20 text-primary text-[10px] font-mono rounded group-hover:bg-primary/30 transition-colors">GET</span>
 <code class="text-sm font-mono text-on-surface">/state</code>
-<span class="text-xs text-on-surface-variant flex-1 text-right group-hover:text-on-surface transition-colors">Get state</span>
+<span class="text-xs text-on-surface-variant flex-1 text-right group-hover:text-on-surface group-hover:translate-x-1 transition-all">Get state</span>
 </a>
 </div>
 </section>
@@ -269,6 +343,62 @@ def dashboard():
                 Meta PyTorch Hackathon • OpenEnv Compatible
             </p>
 </footer>
+
+<script>
+        // Number counter animation
+        function animateCounters() {
+            const counters = document.querySelectorAll('.number-counter');
+            counters.forEach(counter => {
+                const target = parseInt(counter.getAttribute('data-target'));
+                const duration = 1500;
+                const step = target / (duration / 16);
+                let current = 0;
+                const updateCounter = () => {
+                    current += step;
+                    if (current < target) {
+                        counter.textContent = Math.ceil(current);
+                        requestAnimationFrame(updateCounter);
+                    } else {
+                        counter.textContent = target;
+                    }
+                };
+                updateCounter();
+            });
+        }
+
+        // Intersection Observer for scroll animations
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    if (entry.target.id === 'stats-section') {
+                        animateCounters();
+                    }
+                    entry.target.querySelectorAll('.task-card, .endpoint-row').forEach((el, i) => {
+                        setTimeout(() => {
+                            el.classList.add('visible');
+                        }, i * 100);
+                    });
+                }
+            });
+        }, observerOptions);
+
+        // Observe sections
+        document.querySelectorAll('#stats-section, #tasks-section, #endpoints-section').forEach(section => {
+            observer.observe(section);
+        });
+
+        // Add visible class to task cards on load
+        setTimeout(() => {
+            document.querySelectorAll('.task-card').forEach(card => {
+                card.classList.add('visible');
+            });
+        }, 500);
+    </script>
 </body></html>'''
 
 # ── OpenEnv Endpoints ──────────────────────────────────────────────────
