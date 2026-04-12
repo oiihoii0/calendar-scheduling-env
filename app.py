@@ -241,7 +241,7 @@ def dashboard():
 </a>
 <a href="/tasks" class="flex items-center gap-4 p-3 rounded-lg hover:bg-white/5 transition-all group">
 <span class="px-2 py-1 bg-primary/20 text-primary text-[10px] font-mono rounded">GET</span>
-<code class="text-sm font-mono text-on-surface">/tasks</span>
+<code class="text-sm font-mono text-on-surface">/tasks</code>
 <span class="text-xs text-on-surface-variant flex-1 text-right group-hover:text-on-surface transition-colors">List tasks</span>
 </a>
 <div class="flex items-center gap-4 p-3 rounded-lg opacity-60">
