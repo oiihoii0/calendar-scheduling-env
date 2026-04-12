@@ -534,7 +534,9 @@ def _resolve_action(env: CalendarEnv, req: StepRequest) -> int:
 
 def _normalize_score(reward: float, task_name: str) -> float:
     max_score = _MAX_SCORES.get(task_name, 20.0)
-    return round(min(max(reward / max_score, 0.0), 1.0), 4)
+    normalized = reward / max_score
+    # Clamp to strictly between 0 and 1 (not 0.0 or 1.0) for hackathon compliance
+    return round(max(0.001, min(0.999, normalized)), 4)
 
 @app.get("/health")
 def health():
