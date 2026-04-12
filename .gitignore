@@ -22,6 +22,9 @@ charts/
 *.png
 *.jpg
 
+# Keep the example Gantt chart for submission
+!schedule_gantt.png
+
 # Misc
 .env
 *.log

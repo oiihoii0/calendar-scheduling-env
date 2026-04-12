@@ -39,7 +39,7 @@ CalendarSchedulingEnv models the real-world challenge of scheduling meetings wit
 
 ```bash
 # Clone the repository
-git clone https://github.com/your-team/calendar-scheduling-env.git
+git clone https://github.com/oiihoii/calendar-scheduling-env.git
 cd calendar-scheduling-env
 
 # Install dependencies
@@ -51,6 +51,25 @@ pip install -r requirements.txt
 ```bash
 docker compose up --build
 ```
+
+### HTTP Server (OpenEnv)
+
+```bash
+# Start the FastAPI server
+python app.py
+
+# Or with uvicorn
+uvicorn app:app --host 0.0.0.0 --port 7860 --reload
+```
+
+Then open http://localhost:7860 for the interactive dashboard.
+
+**API Endpoints:**
+- `GET /health` — Health check
+- `GET /tasks` — List available tasks  
+- `POST /reset` — Reset environment
+- `POST /step` — Take action
+- `GET /state` — Get current state
 
 ---
 

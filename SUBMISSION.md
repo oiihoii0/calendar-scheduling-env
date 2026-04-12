@@ -61,25 +61,23 @@ Each action encodes: *which event* to place, *at what time* (30-min slots,
 
 ## Results
 
-### PPO Learning Curves
+### Baseline Agent Performance
 
-PPO was trained using Stable-Baselines3 with a `MultiInputPolicy` network
-(2 × 256 hidden units for both actor and critic).
+The environment includes three baseline agents for benchmarking:
 
-| Task | Timesteps | Final Reward | Conflicts |
-|------|-----------|-------------|-----------|
-| Simple | 50,000 | **+15.90** | 0 |
-| Constrained | 100,000 | **+23.00** | 0 |
-| Complex | 200,000 | −57.70 (still learning) | 0 |
+| Agent | Simple | Constrained | Complex |
+|-------|--------|-------------|---------|
+| **Random** | ~-12.0 | ~-25.0 | ~-80.0 |
+| **Greedy** | ~+5.0 | ~+2.0 | ~-40.0 |
+| **Heuristic** | ~+12.0 | ~+6.4 | ~-15.0 |
 
-> **Key finding**: PPO **surpasses the hand-crafted heuristic baseline** on
-> the constrained task (+23.0 vs +6.4), demonstrating genuine learning.
-> The hard task shows clear upward progress and would benefit from longer training.
+> **Note**: PPO training can be run via `python train.py` (requires `stable-baselines3`).
+> The environment is designed for policy-gradient methods with its discrete action space
+> and dense reward structure.
 
-### Charts
-- `charts/learning_curves.png` — reward vs timesteps for all 3 tasks
-- `charts/ppo_vs_heuristic.png` — PPO vs heuristic comparison
-- `schedule_gantt.png` — example Gantt chart of a scheduled day
+### Visualizations
+- `schedule_gantt.png` — example Gantt chart of a scheduled day (included)
+- Training charts can be generated via `python train.py` after installing `stable-baselines3`
 
 ---
 

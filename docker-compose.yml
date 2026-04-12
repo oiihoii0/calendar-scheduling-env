@@ -6,8 +6,10 @@ services:
       context: .
       dockerfile: Dockerfile
     container_name: calendar-scheduling-env
+    ports:
+      - "7860:7860"
     environment:
       - PYTHONUNBUFFERED=1
     volumes:
       - ./scheduling_env:/app/scheduling_env
-    command: python -m scheduling_env.baseline
+    command: uvicorn app:app --host 0.0.0.0 --port 7860 --reload

@@ -7,3 +7,7 @@ uvicorn>=0.23.0
 httpx>=0.24.0
 openai>=1.0.0
 pydantic>=2.0.0
+
+# Optional: for training RL agents
+# stable-baselines3>=2.0.0
+# matplotlib>=3.7.0
